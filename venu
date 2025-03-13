@@ -1,0 +1,70 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+public class LinkShortener {
+
+    private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final int SHORT_URL_LENGTH = 6;
+    private Map<String, String> shortToLong;
+    private Map<String, String> longToShort;
+    private Random random;
+
+    public LinkShortener() {
+        this.shortToLong = new HashMap<>();
+        this.longToShort = new HashMap<>();
+        this.random = new Random();
+    }
+
+    public String shortenUrl(String longUrl) {
+        if (longToShort.containsKey(longUrl)) {
+            return longToShort.get(longUrl);
+        }
+
+        String shortUrl;
+        do {
+            shortUrl = generateShortUrl();
+        } while (shortToLong.containsKey(shortUrl));
+
+        shortToLong.put(shortUrl, longUrl);
+        longToShort.put(longUrl, shortUrl);
+        return shortUrl;
+    }
+
+    public String expandUrl(String shortUrl) {
+        return shortToLong.getOrDefault(shortUrl, "Short URL not found.");
+    }
+
+    private String generateShortUrl() {
+        StringBuilder sb = new StringBuilder(SHORT_URL_LENGTH);
+        for (int i = 0; i < SHORT_URL_LENGTH; i++) {
+            int randomIndex = random.nextInt(ALLOWED_CHARS.length());
+            sb.append(ALLOWED_CHARS.charAt(randomIndex));
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        LinkShortener shortener = new LinkShortener();
+
+        String longUrl1 = "https://www.example.com/very/long/url/path/to/resource";
+        String longUrl2 = "https://www.google.com/search?q=java+link+shortener";
+        String longUrl3 = "https://www.stackoverflow.com/questions/12345678/how-to-implement-link-shortener";
+
+        String shortUrl1 = shortener.shortenUrl(longUrl1);
+        String shortUrl2 = shortener.shortenUrl(longUrl2);
+        String shortUrl3 = shortener.shortenUrl(longUrl3);
+
+        System.out.println("Shortened URL 1: " + shortUrl1);
+        System.out.println("Shortened URL 2: " + shortUrl2);
+        System.out.println("Shortened URL 3: " + shortUrl3);
+
+        System.out.println("Expanded URL 1: " + shortener.expandUrl(shortUrl1));
+        System.out.println("Expanded URL 2: " + shortener.expandUrl(shortUrl2));
+        System.out.println("Expanded URL 3: " + shortener.expandUrl(shortUrl3));
+
+        System.out.println("Expanded non-existent URL: " + shortener.expandUrl("invalid"));
+
+        System.out.println("Second shortening of URL1: " + shortener.shortenUrl(longUrl1)); // should return the same short url.
+    }
+}
