@@ -1,0 +1,70 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Text To Word</title></head><body><p>import java.util.HashMap;</p>
+<p>import java.util.Map;</p>
+<p>import java.util.Random;</p>
+<p>&nbsp;</p>
+<p>public class LinkShortener {</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";</p>
+<p>&nbsp; &nbsp; private static final int SHORT_URL_LENGTH = 6;</p>
+<p>&nbsp; &nbsp; private Map&lt;String, String&gt; shortToLong;</p>
+<p>&nbsp; &nbsp; private Map&lt;String, String&gt; longToShort;</p>
+<p>&nbsp; &nbsp; private Random random;</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; public LinkShortener() {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; this.shortToLong = new HashMap&lt;&gt;();</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; this.longToShort = new HashMap&lt;&gt;();</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; this.random = new Random();</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; public String shortenUrl(String longUrl) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; if (longToShort.containsKey(longUrl)) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return longToShort.get(longUrl);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String shortUrl;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; do {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; shortUrl = generateShortUrl();</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; } while (shortToLong.containsKey(shortUrl));</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; shortToLong.put(shortUrl, longUrl);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; longToShort.put(longUrl, shortUrl);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; return shortUrl;</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; public String expandUrl(String shortUrl) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; return shortToLong.getOrDefault(shortUrl, "Short URL not found.");</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; private String generateShortUrl() {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; StringBuilder sb = new StringBuilder(SHORT_URL_LENGTH);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; for (int i = 0; i &lt; SHORT_URL_LENGTH; i++) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int randomIndex = random.nextInt(ALLOWED_CHARS.length());</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; sb.append(ALLOWED_CHARS.charAt(randomIndex));</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; return sb.toString();</p>
+<p>&nbsp; &nbsp; }</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; public static void main(String[] args) {</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; LinkShortener shortener = new LinkShortener();</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String longUrl1 = "https://www.example.com/very/long/url/path/to/resource";</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String longUrl2 = "https://www.google.com/search?q=java+link+shortener";</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String longUrl3 = "https://www.stackoverflow.com/questions/12345678/how-to-implement-link-shortener";</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String shortUrl1 = shortener.shortenUrl(longUrl1);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String shortUrl2 = shortener.shortenUrl(longUrl2);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; String shortUrl3 = shortener.shortenUrl(longUrl3);</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Shortened URL 1: " + shortUrl1);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Shortened URL 2: " + shortUrl2);</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Shortened URL 3: " + shortUrl3);</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Expanded URL 1: " + shortener.expandUrl(shortUrl1));</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Expanded URL 2: " + shortener.expandUrl(shortUrl2));</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Expanded URL 3: " + shortener.expandUrl(shortUrl3));</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Expanded non-existent URL: " + shortener.expandUrl("invalid"));</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println("Second shortening of URL1: " + shortener.shortenUrl(longUrl1)); // should return the same short url.</p>
+<p>&nbsp; &nbsp; }</p>
+<p>}</p></body></html>
